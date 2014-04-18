@@ -7,3 +7,9 @@ libraryDependencies ++= Seq(
 )     
 
 play.Project.playScalaSettings
+
+org.scalastyle.sbt.ScalastylePlugin.Settings
+
+scalariformSettings
+
+ScalariformKeys.preferences := Common.defaultScalariformPreferences
