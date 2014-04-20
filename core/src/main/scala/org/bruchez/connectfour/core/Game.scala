@@ -47,6 +47,8 @@ object Game {
   val ConnectedCountToWin = 4
 
   def main(args: Array[String]) {
+    //System.setProperty("java.library.path", "/opt/local/lib/")
+
     val redPlayer = RandomPlayer(id = "Random player", seed = 1234L)
     //val yellowPlayer = LeftRightPlayer(id = "Left/right player", direction = LeftToRight)
     val yellowPlayer = NeuralPlayer(id = "Neural player", lambda = 0.9)
