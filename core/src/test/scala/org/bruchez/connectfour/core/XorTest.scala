@@ -1,6 +1,6 @@
 package org.bruchez.connectfour.core
 
-import com.github.neuralnetworks.architecture.Matrix
+import com.github.neuralnetworks.architecture.{ Matrix, NeuralNetwork }
 import com.github.neuralnetworks.architecture.types.NNFactory
 import com.github.neuralnetworks.calculation.OutputError
 import com.github.neuralnetworks.training._
@@ -25,10 +25,10 @@ class XorTest extends Specification {
         testingInput,
         new XorOutputError(),
         new NNRandomInitializer(new MersenneTwisterRandomInitializer(-0.01f, 0.01f)),
-        1f,
-        0.5f,
-        0f,
-        0f)
+        /*learningRate*/ 1f,
+        /*momentum*/ 0.5f,
+        /*l1weightDecay*/ 0f,
+        /*l2weightDecay*/ 0f)
 
       // add logging
       bpt.addEventListener(new LogTrainingListener(Thread.currentThread().getStackTrace()(1).getMethodName))
@@ -42,8 +42,38 @@ class XorTest extends Specification {
       // test
       bpt.test()
 
+      /*println(s"0, 0 -> ${xor(mlp, 0.0f, 0.0f)}")
+      println(s"0, 1 -> ${xor(mlp, 0.0f, 1.0f)}")
+      println(s"1, 0 -> ${xor(mlp, 1.0f, 0.0f)}")
+      println(s"1, 1 -> ${xor(mlp, 1.0f, 1.0f)}")*/
+
       bpt.getOutputError.getTotalNetworkError must beCloseTo(0.0f, 0.1f)
     }
+  }
+
+  private def xor(neuralNetwork: NeuralNetwork, firstValue: Float, secondValue: Float): Double = {
+    import com.github.neuralnetworks.architecture.Layer
+    import com.github.neuralnetworks.calculation.ValuesProvider
+    import com.github.neuralnetworks.util.UniqueList
+
+    // Input layer
+    val input = new Matrix(2, 1)
+    input.set(0, 0, firstValue)
+    input.set(1, 0, secondValue)
+
+    // Input layer is already "computed"
+    val calculatedLayers = new UniqueList[Layer]
+    calculatedLayers.add(neuralNetwork.getInputLayer)
+
+    // Set the "computed" values of the input layer
+    val results = new ValuesProvider
+    results.addValues(neuralNetwork.getInputLayer, input)
+
+    // Compute the output layer
+    neuralNetwork.getLayerCalculator.calculate(neuralNetwork, neuralNetwork.getOutputLayer, calculatedLayers, results)
+
+    // Get back the value of the output
+    results.getValues(neuralNetwork.getOutputLayer).get(0, 0)
   }
 }
 
