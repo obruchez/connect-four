@@ -5,7 +5,7 @@ import scala.util.Random
 // Simple player playing randomly
 
 case class RandomPlayer(override val id: String, seed: Long) extends Player {
-  def columnToPlay(board: Board): Int = {
+  override def columnToPlay(board: Board): Int = {
     val nonFullColumnIndexes = board.nonFullColumnIndexes.toIndexedSeq
 
     if (nonFullColumnIndexes.isEmpty) {
@@ -13,6 +13,11 @@ case class RandomPlayer(override val id: String, seed: Long) extends Player {
     } else {
       nonFullColumnIndexes(random.nextInt(nonFullColumnIndexes.size))
     }
+  }
+
+  override def learn(playerColor: Color, resultWithBoardHistory: ResultWithBoardHistory): RandomPlayer = {
+    // This player doesn't learn...
+    this
   }
 
   private val random = new Random(seed)

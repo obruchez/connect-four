@@ -18,3 +18,5 @@ case object YellowWin extends Result {
   override val winningColor = Some(Yellow)
   override val toString = "Yellow win"
 }
+
+case class ResultWithBoardHistory(result: Result, boards: Seq[Board])

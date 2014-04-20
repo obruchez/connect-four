@@ -6,11 +6,11 @@ case class Game(redPlayer: Player, yellowPlayer: Player) {
    *
    * @return the sequence of board states and the game result (draw or red/yellow win)
    */
-  def play: (Seq[Board], Result) = {
+  def play: ResultWithBoardHistory = {
     // @tailrec
     def boardsAndResult(currentColor: Color,
                         currentBoard: Board,
-                        previousBoards: Seq[Board]): (Seq[Board], Result) = {
+                        previousBoards: Seq[Board]): ResultWithBoardHistory = {
       // Complete board history with current board
       val previousAndCurrentBoards = previousBoards :+ currentBoard
 
@@ -28,7 +28,7 @@ case class Game(redPlayer: Player, yellowPlayer: Player) {
       nextBoard.result match {
         case Some(result) =>
           // End of the game => next board is final board
-          (previousAndCurrentBoards :+ nextBoard, result)
+          ResultWithBoardHistory(result = result, boards = previousAndCurrentBoards :+ nextBoard)
         case None =>
           // No result yet => keep going
           boardsAndResult(
@@ -48,14 +48,18 @@ object Game {
 
   def main(args: Array[String]) {
     val redPlayer = RandomPlayer(id = "Random player", seed = 1234L)
-    val yellowPlayer = LeftRightPlayer(id = "Left/right player", direction = LeftToRight)
+    //val yellowPlayer = LeftRightPlayer(id = "Left/right player", direction = LeftToRight)
+    val yellowPlayer = NeuralPlayer(id = "Neural player", lambda = 0.9)
 
-    val (boards, result) = Game(redPlayer, yellowPlayer).play
+    val resultWithBoardHistory = Game(redPlayer, yellowPlayer).play
 
-    println(s"Result: $result\n")
+    println(s"Result: ${resultWithBoardHistory.result}\n")
 
-    for ((board, index) <- boards.zipWithIndex) {
+    for ((board, index) <- resultWithBoardHistory.boards.zipWithIndex) {
       println(s"Turn $index:\n\n$board\n")
     }
+
+    redPlayer.learn(playerColor = Red, resultWithBoardHistory = resultWithBoardHistory)
+    yellowPlayer.learn(playerColor = Yellow, resultWithBoardHistory = resultWithBoardHistory)
   }
 }
