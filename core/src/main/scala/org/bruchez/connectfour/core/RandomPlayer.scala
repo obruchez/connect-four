@@ -22,3 +22,13 @@ case class RandomPlayer(override val id: String, seed: Long) extends Player {
 
   private val random = new Random(seed)
 }
+
+object RandomPlayer extends PlayerGeneratorAndSerializer[RandomPlayer] {
+  override def randomPlayer(id: String): RandomPlayer = {
+    val seed = random.nextLong()
+
+    RandomPlayer(id, seed)
+  }
+
+  private val random = new Random
+}

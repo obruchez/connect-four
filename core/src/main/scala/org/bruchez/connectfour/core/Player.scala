@@ -22,3 +22,9 @@ trait Player {
    */
   def learn(playerColor: Color, resultWithBoardHistory: ResultWithBoardHistory): Player
 }
+
+trait PlayerGeneratorAndSerializer[P <: Player] {
+  def randomPlayer(id: String): P
+
+  //def fromSerializedString(serializedString: String): Try[P]
+}

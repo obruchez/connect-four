@@ -1,5 +1,7 @@
 package org.bruchez.connectfour.core
 
+import scala.util.Random
+
 sealed trait Direction
 
 case object LeftToRight extends Direction
@@ -25,4 +27,14 @@ case class LeftRightPlayer(override val id: String, direction: Direction) extend
     // This player doesn't learn...
     this
   }
+}
+
+object LeftRightPlayer extends PlayerGeneratorAndSerializer[LeftRightPlayer] {
+  override def randomPlayer(id: String): LeftRightPlayer = {
+    val direction = if (random.nextBoolean()) LeftToRight else RightToLeft
+
+    LeftRightPlayer(id, direction)
+  }
+
+  private val random = new Random
 }

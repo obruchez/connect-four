@@ -49,9 +49,9 @@ object Game {
   def main(args: Array[String]) {
     //System.setProperty("java.library.path", "/opt/local/lib/")
 
-    val redPlayer = RandomPlayer(id = "Random player", seed = 1234L)
-    //val yellowPlayer = LeftRightPlayer(id = "Left/right player", direction = LeftToRight)
-    val yellowPlayer = NeuralPlayer(id = "Neural player", lambda = 0.9)
+    val redPlayer = RandomPlayer.randomPlayer(id = "Random player")
+    //val yellowPlayer2 = LeftRightPlayer.randomPlayer(id = "Left/right player")
+    val yellowPlayer = NeuralPlayer.randomPlayer(id = "Neural player")
 
     val resultWithBoardHistory = Game(redPlayer, yellowPlayer).play
 
